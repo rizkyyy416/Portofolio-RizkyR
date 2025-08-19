@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form Kontak dengan AJAX</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        color: #333;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 600px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      header {
+        background: linear-gradient(to right, #4b6cb7, #182848);
+        color: white;
+        padding: 25px;
+        text-align: center;
+      }
+
+      header h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+
+      header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      .contact-form {
+        padding: 30px;
+      }
+
+      .contact-form h2 {
+        color: #4b6cb7;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+        text-align: center;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        border-color: #4b6cb7;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
+      }
+
+      .form-group textarea {
+        min-height: 150px;
+        resize: vertical;
+      }
+
+      button {
+        background: linear-gradient(to right, #4b6cb7, #182848);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+
+      button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .success-message {
+        display: none;
+        background: #4caf50;
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        margin-top: 20px;
+        animation: fadeIn 0.5s ease;
+      }
+
+      .error-message {
+        display: none;
+        background: #f44336;
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        margin-top: 20px;
+        animation: fadeIn 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .loading i {
+        font-size: 2rem;
+        color: #4b6cb7;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      footer {
+        text-align: center;
+        padding: 20px;
+        background: #f8f9fa;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          margin: 10px;
+        }
+        header h1 {
+          font-size: 1.8rem;
+        }
+        .contact-form {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <header>
+        <h1><i class="fas fa-paper-plane"></i> Hubungi Saya</h1>
+        <p>Isi form di bawah ini untuk mengirim pesan</p>
+      </header>
+
+      <div class="contact-form">
+        <h2>Form Pesan</h2>
+
+        <!-- Ganti YOUR_FORM_ID dengan ID Formspree Anda -->
+        <form
+          id="contactForm"
+          action="https://formspree.io/f/mnnzkqlv"
+          method="POST"
+        >
+          <div class="form-group">
+            <label for="name">Nama Lengkap</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              placeholder="Masukkan nama Anda"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Alamat Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              placeholder="Masukkan email Anda"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="message">Pesan</label>
+            <textarea
+              id="message"
+              name="message"
+              required
+              placeholder="Tulis pesan Anda di sini..."
+            ></textarea>
+          </div>
+
+          <button type="submit" id="submitBtn">
+            <i class="fas fa-paper-plane"></i> Kirim Pesan
+          </button>
+        </form>
+
+        <div class="loading" id="loading">
+          <i class="fas fa-spinner"></i>
+          <p>Mengirim pesan...</p>
+        </div>
+
+        <div class="success-message" id="successMessage">
+          <i class="fas fa-check-circle"></i>
+          <p>Pesan Anda telah terkirim! Saya akan membalasnya segera.</p>
+        </div>
+
+        <div class="error-message" id="errorMessage">
+          <i class="fas fa-exclamation-circle"></i>
+          <p>
+            Terjadi kesalahan. Silakan coba lagi atau hubungi melalui media
+            sosial.
+          </p>
+        </div>
+      </div>
+
+      <footer>
+        <p>© 2023 Portfolio Saya. All rights reserved.</p>
+      </footer>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("contactForm");
+        const loading = document.getElementById("loading");
+        const successMessage = document.getElementById("successMessage");
+        const errorMessage = document.getElementById("errorMessage");
+        const submitBtn = document.getElementById("submitBtn");
+
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          // Sembunyikan pesan error/success sebelumnya
+          successMessage.style.display = "none";
+          errorMessage.style.display = "none";
+
+          // Tampilkan loading
+          loading.style.display = "block";
+          submitBtn.disabled = true;
+
+          // Kirim form menggunakan AJAX
+          const formData = new FormData(form);
+
+          fetch(form.action, {
+            method: "POST",
+            body: formData,
+            headers: {
+              Accept: "application/json",
+            },
+          })
+            .then((response) => {
+              if (response.ok) {
+                // Jika berhasil, tampilkan pesan sukses
+                successMessage.style.display = "block";
+                form.reset();
+              } else {
+                // Jika gagal, tampilkan pesan error
+                errorMessage.style.display = "block";
+              }
+            })
+            .catch((error) => {
+              // Jika terjadi error, tampilkan pesan error
+              errorMessage.style.display = "block";
+            })
+            .finally(() => {
+              // Sembunyikan loading dan aktifkan tombol kembali
+              loading.style.display = "none";
+              submitBtn.disabled = false;
+            });
+        });
+      });
+    </script>
+  </body>
+</html>
